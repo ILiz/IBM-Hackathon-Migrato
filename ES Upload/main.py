@@ -1,3 +1,4 @@
+import glob
 import pickle
 import re
 import sys
@@ -10,6 +11,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 import ElasticSearch
+import DatabaseConnection
 
 
 def get_sparse_vector(text_1):
@@ -71,8 +73,10 @@ def pre_processingtext(text_data):
 
 
 t = time.time()
+
+
 if ElasticSearch.create_index():
-    documents = databaseConnection.get_database_documents()
+    documents = DatabaseConnection.get_database_documents()
 
     all_texts = []
     for document in documents:
@@ -144,6 +148,7 @@ if ElasticSearch.create_index():
                         .replace("\n", " ")
                         .replace("\t", " ")
                         .replace("'", "") + "\n")
+
 
 elapsed = time.time() - t
 print(elapsed)
