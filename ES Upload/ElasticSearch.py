@@ -18,7 +18,8 @@ def send_data_bulk(bulk_data):
     r = requests.post(url=Credentials.url + Credentials.index + "/_bulk",
                       data=bulk_data.encode("utf-8"),
                       auth=(Credentials.authentication_username, Credentials.authentication_password),
-                      headers={'Content-Type': 'application/x-ndjson'}
+                      headers={'Content-Type': 'application/x-ndjson'},
+                      verify=False
                       )
     if r.json()['errors']:
         print(r.content)
@@ -38,30 +39,18 @@ def create_index():
                 "my_sparse_vector": {
                     "type": "dense_vector"
                 },
-                "my_text": {
+                "Text": {
                     "type": "text"
                 },
-                "my_title": {
+                "Title": {
                     "type": "text"
                 },
-                "my_uri_source": {
-                    "type": "text"
-                },
-                "my_extension": {
-                    "type": "text"
-                },
-                "my_creation_date": {
-                    "type": "text"
-                },
-                "my_numpages": {
-                    "type": "text"
-                },
-                "my_author": {
+                "Course": {
                     "type": "text"
                 }
             }
         }
-    }, auth=(Credentials.authentication_username, Credentials.authentication_password))
+    }, auth=(Credentials.authentication_username, Credentials.authentication_password), verify=False)
     try:
         if r.json()['error']:
             if r.json()['error']['root_cause'][0]['type'] == "resource_already_exists_exception":

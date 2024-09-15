@@ -102,10 +102,6 @@ if ElasticSearch.create_index():
             title = document[1]
             uri_source = document[2]
             text = document[3].replace('"', '').replace("\\", "\\\\")
-            extension = document[4]
-            creation_date = document[5]
-            numpages = document[6]
-            author = document[7]
 
             chunks = textSplitter.split_text(text)
             chunkNumber = 0
@@ -117,7 +113,7 @@ if ElasticSearch.create_index():
 
                     json_data.append(f'{{\"index\": {{\"_id\": \"{str(asset_id) + "_" + str(chunkNumber)}\"}}}}')
                     json_data.append(
-                        f'{{\"my_vector\": {dense_vector.tolist()}, \"my_sparse_vector\": {sparse_vector.toarray().tolist()[0]}, \"my_text\": \"{str(chunk_text)}\", \"my_title\": \"{str(title)}\", \"my_uri_source\": \"{str(uri_source)}\", \"my_extension\": \"{str(extension)}\", \"my_creation_date\": \"{creation_date}\", \"my_numpages\": \"{numpages}\", \"my_author\": \"{author}\"}}')
+                        f'{{\"my_vector\": {dense_vector.tolist()}, \"my_sparse_vector\": {sparse_vector.toarray().tolist()[0]}, \"Text\": \"{str(chunk_text)}\", \"Title\": \"{str(title)}\", \"Course\": \"{str(uri_source)}\"}}')
                     chunkNumber += 1
                 except Exception as e:
                     print(e)
