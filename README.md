@@ -3,8 +3,8 @@ Migrato's idea for the IBM Hackathon 2024
 
 ## Requirements
 
-Python 3.11
-pip install -r requirements.txt
+Python 3.11  
+pip install -r requirements.txt  
 pip install "fastapi[standard]"
 
 ## Elasticsearch local setup
@@ -38,7 +38,7 @@ For authorization, use Basic Auth. The username is elastic, the password you jus
 
 ## Backend server
 
-cd Backend
+cd Backend  
 fastapi dev main.py
 
 ## Licensing
