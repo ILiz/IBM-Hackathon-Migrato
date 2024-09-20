@@ -1,4 +1,5 @@
 import json
+import sys
 import re
 import traceback
 import uuid
@@ -101,21 +102,30 @@ def upload_to_index(filename: str, title: str, text: str):
         print(traceback.format_exc())
         print(e)
     print(str(idC) + " - " + str(len(json_data)))
+    print(json_data)
     idC += 1
 
     print("preparation complete")
 
+    previous_id = 0
     data_string = ""
     for i in range(len(json_data)):
+        sizeData = sys.getsizeof(json_data[previous_id:i])
+        if sizeData >= 100000000 or (i % 100 == 0 and i > 0):
+            ElasticSearch.send_data_bulk(data_string)
+            data_string = ""
+            previous_id = i
+            print("data send to elasticsearch")
+        if i == len(json_data) - 1:
+            ElasticSearch.send_data_bulk(data_string)
+            data_string = ""
+            print("final data send to elasticsearch")
         data_string += (json_data[i]
                         .replace("\r\n", " ")
                         .replace("\r", " ")
                         .replace("\n", " ")
                         .replace("\t", " ")
                         .replace("'", "") + "\n")
-        ElasticSearch.send_data_bulk(data_string)
-        data_string = ""
-        print("data sent to elasticsearch")
 
 
 def get_elastic_search_records(question):
@@ -136,6 +146,8 @@ def get_elastic_search_records(question):
                                       json=json.loads(json_body),
                                       auth=HTTPBasicAuth(authentication_username, authentication_password),
                                       verify=False).text)
+    print("HITS:", flush=True)
+    print(result, flush=True)
     result = result['hits']['hits']
 
     full_context = ""

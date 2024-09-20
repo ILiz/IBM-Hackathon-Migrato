@@ -7,22 +7,25 @@ from pypdf import PdfReader
 from fastapi import FastAPI, Form, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
+from Backend.libs.ElasticSearch import create_index
 from Backend.IbmConnections import seek_answer_IBM
 from Backend.libs.utils import upload_to_index
-
-# from Backend.libs.utils import upload_to_index
 
 API_VERSION = "1.0.0"
 print("API VERSION: " + API_VERSION, flush=True)
 
-app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, swagger_ui_oauth2_redirect_url=None,
-              title="Migrato B.V. Student Rag API", version=API_VERSION)
+# create_index()  # run once, to create index
+app = FastAPI(title="Migrato B.V. Student Rag API", version=API_VERSION)
+
+
+@app.get('/api/v1/version')
+def version_ping():
+    return API_VERSION
 
 
 @app.post('/api/v1/documentSubmitIndexing')
 def submit_document_for_indexing(
         file_upload: UploadFile,
-        jwtToken: Annotated[str, Form()],
         response: JSONResponse):
     suffix = file_upload.filename.split(".")[1].lower()  # TODO: This can be done better
 
@@ -49,7 +52,7 @@ def submit_document_for_indexing(
     else:
         raise HTTPException(status_code=1234, detail="Unsupported format")
 
-    print(extracted_text, flush=True)
+#    print(extracted_text, flush=True)
     Path(file_upload.filename).unlink(missing_ok=True)
 
     upload_to_index(file_upload.filename, file_upload.filename.split(".")[0], extracted_text)
@@ -58,13 +61,7 @@ def submit_document_for_indexing(
 
 
 @app.post('/api/v1/ragDocumentStreamIBM')
-def seek_answer_IBM_API():
-    #    question: Annotated[str, Form()],
-    #    jwtToken: Annotated[str, Form()],
-    #    response: JSONResponse):
-    question = "Wie werkt er bij Pratt & Whitney?"
-    seek_answer_IBM(question)
-    return
-
-
-seek_answer_IBM_API()
+def seek_answer_IBM_API(
+       question: Annotated[str, Form()],
+       response: JSONResponse):
+    return seek_answer_IBM(question)
