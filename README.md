@@ -1,6 +1,12 @@
 # IBM-Hackathon-Migrato
 Migrato's idea for the IBM Hackathon 2024
 
+## Requirements
+
+Python 3.11
+pip install -r requirements.txt
+pip install "fastapi[standard]"
+
 ## Elasticsearch local setup
 Make sure you have docker desktop installed for this setup
 
@@ -29,3 +35,12 @@ curl --location --request PUT 'https://127.0.0.1:9200/index_vector' \
 }'
 
 For authorization, use Basic Auth. The username is elastic, the password you just got from the elasticsearch setup. This API request creates a test index. If successfull you should get a "acknowledge: true" back. 
+
+## Backend server
+
+cd Backend
+fastapi dev main.py
+
+## Licensing
+
+pypdf was picked due to its permissive BSD license and reasonable performance: https://pypi.org/project/pypdf/4.3.1/

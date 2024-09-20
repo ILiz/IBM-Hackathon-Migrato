@@ -1,0 +1,7 @@
+sentence-transformers==3.1.0
+langchain==0.3.0
+mysql-connector-python==9.0.0
+pypdf==4.3.1
+fastapi==0.114.2
+ibm-watson-machine-learning==1.0.360
+barely-json==1.0.0

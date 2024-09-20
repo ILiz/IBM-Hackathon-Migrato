@@ -1,4 +1,4 @@
-from RAGresponseGeneration   import RAGresponseGeneration
+from Backend.IBM.RAGresponseGeneration   import RAGresponseGeneration
 from barely_json import parse
 
 
