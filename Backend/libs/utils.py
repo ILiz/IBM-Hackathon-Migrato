@@ -1,12 +1,16 @@
+import json
 import re
 import traceback
 import uuid
 
+import requests
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from requests.auth import HTTPBasicAuth
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer
 
 from Backend.libs import ElasticSearch
+from Backend.libs.Credentials import url, index, authentication_username, authentication_password
 
 
 def load_model(model_name):
@@ -112,3 +116,32 @@ def upload_to_index(filename: str, title: str, text: str):
         ElasticSearch.send_data_bulk(data_string)
         data_string = ""
         print("data sent to elasticsearch")
+
+
+def get_elastic_search_records(question):
+    dense_vector = model_encoding(question, model).tolist()
+
+    json_body = """
+            {
+                "knn": {
+                    "field": "my_vector",
+                    "query_vector": """ + str(dense_vector) + """,
+                    "k": 5,
+                    "num_candidates": 100
+                }
+            }
+            """
+    result = json.loads(requests.post(url=url+index+"/_search",
+                                      headers={"Accept": "application/json", "Content-Type": "application/json"},
+                                      json=json.loads(json_body),
+                                      auth=HTTPBasicAuth(authentication_username, authentication_password),
+                                      verify=False).text)
+    result = result['hits']['hits']
+
+    full_context = ""
+    for hit in result:
+        full_context += hit["_source"]["Text"]
+        full_context += "\n\n"
+
+    return full_context
+

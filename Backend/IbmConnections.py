@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 
 from Backend.IBM.RAGmain import RAGmain
 from Backend.IBM.SetVariables import SetVariables
+from Backend.libs.utils import get_elastic_search_records
 
 varNames = [
     "WXAPIkey",
@@ -23,6 +24,8 @@ def get_rag_main_ibm():
 
 
 def seek_answer_IBM(question):
+    context = get_elastic_search_records(question)
+
     rag = get_rag_main_ibm()
 
     response = dict(rag.rag(question, answerGeneration=True))
