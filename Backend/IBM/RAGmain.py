@@ -33,7 +33,7 @@ class RAGmain:
         self.WX = RAGresponseGeneration(WXAPIkey, WXAPIurl, WXprojectID, llmName, llmParameters)
         return
 
-    def rag(self, question, promptTemplate=None, answerGeneration=False):
+    def rag(self, question, context, promptTemplate=None, answerGeneration=False):
         """
         The primary method which:
         a) retrieves from the Knowledge Base the context used in the prompt for the LLM.
@@ -66,55 +66,42 @@ class RAGmain:
             print(e)
             print(f'ERR: cannot parse JSON string {generatedQueryClass}\nDetails\n{e}')
             return {
-                "generatedText": "Ik weet het niet.",
+                "generatedText": "I don't know.",
                 "debugInfo": {
                     "modelInfo": modelInfo,
                     "promptUsed": self.defaultInputGuardianPromptTemplate,
                     "question": question,
-                    "context": "",
-                    "WDresponce": []
+                    "context": ""
                 }
             }
         if "code" not in queryClass or "desc" not in queryClass:
-            print(f'ERR: I cannot clasyfy the question {question}')
+            print(f'ERR: I cannot classify the question {question}')
             return {
-                "generatedText": "Ik weet het niet.",
+                "generatedText": "I don't know.",
                 "debugInfo": {
                     "modelInfo": modelInfo,
                     "promptUsed": self.defaultInputGuardianPromptTemplate,
                     "question": question,
-                    "context": "",
-                    "WDresponce": []
+                    "context": ""
                 }
             }
         if queryClass['code'] != 1:
-            print(f'WARN: The provided question is clasyfied as non regular one: {question}')
+            print(f'WARN: The provided question is classified as non regular one: {question}')
             return {
-                "generatedText": "Ik weet het niet. " + queryClass['desc'],
+                "generatedText": "I don't know. " + queryClass['desc'],
                 "debugInfo": {
                     "modelInfo": modelInfo,
                     "promptUsed": self.defaultInputGuardianPromptTemplate,
                     "question": question,
-                    "context": "",
-                    "WDresponce": []
+                    "context": ""
                 }
             }
 
         # STEP 2 - set the main prompt template set the prompt template
-        if promptTemplate == None:
+        if promptTemplate is None:
             self.promptTemplate = self.defaultPromptTemplate
 
-        # STEP 3 - query Watson Discovery
-        # print(f'INFO: quering Knowledge Base')
-        # WDresponce = self.WD.queryKnowledgeBase(question)
-        # print(WDresponce)
-        WDresponce = ["hallo ik ben een robot dini, ik werk voor Pratt & Whitney"]
-
         if answerGeneration:
-            # STEP 4 - create context based on Watson Discovery Results
-            context = self.createContext(WDresponce)
-            print(context)
-
             # STEP 5 -  prompt the LLM
             print(f'INFO: generating final answer')
             generatedText = self.WX.promptWXmodel(
@@ -128,8 +115,7 @@ class RAGmain:
                     "modelInfo": modelInfo,
                     "promptUsed": self.promptTemplate,
                     "question": question,
-                    "context": context,
-                    "WDresponce": WDresponce
+                    "context": context
                 }
             }
 
@@ -139,19 +125,10 @@ class RAGmain:
                 "modelInfo": modelInfo,
                 "promptUsed": self.promptTemplate,
                 "question": question,
-                "context": "",
-                "WDresponce": WDresponce
+                "context": ""
             }
         }
 
-    def createContext(self, WDresponce):
-        #mostRelevantDocument = WDresponce[0]
-
-        context = "hallo ik ben een robot dino, ik werk voor Pratt & Whitney"
-        #for passage in mostRelevantDocument['WD_document_passages']:
-        #    context = context + '\n' + passage['passage_text']
-
-        return context
 
     defaultPromptTemplate = '''
         <INST> De invoersectie bevat de Vraag en Context. Beantwoord de gegeven vraag met inachtneming van alleen de informatie die als Context is verstrekt. Als je het antwoord op de gegeven vraag niet vindt in de verstrekte informatie als Context, antwoord dan met "Ik weet het niet." Verzin het antwoord niet. Concentreer u alleen op informatie die in context wordt verstrekt.

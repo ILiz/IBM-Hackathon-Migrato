@@ -28,7 +28,7 @@ def seek_answer_IBM(question):
 
     rag = get_rag_main_ibm()
 
-    response = dict(rag.rag(question, answerGeneration=True))
+    response = dict(rag.rag(question, context, answerGeneration=True))
     print(response)
 
     merged_results = {'answer': response['generatedText']}
