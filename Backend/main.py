@@ -56,9 +56,13 @@ def submit_document_for_indexing(
 
 
 @app.post('/api/v1/ragDocumentStreamIBM')
-def seek_answer_IBM_API(
-        question: Annotated[str, Form()],
-        jwtToken: Annotated[str, Form()],
-        response: JSONResponse):
-    seek_answer_IBM()
+def seek_answer_IBM_API():
+    #    question: Annotated[str, Form()],
+    #    jwtToken: Annotated[str, Form()],
+    #    response: JSONResponse):
+    question = "Wie werkt er bij Pratt & Whitney?"
+    seek_answer_IBM(question)
     return
+
+
+seek_answer_IBM_API()

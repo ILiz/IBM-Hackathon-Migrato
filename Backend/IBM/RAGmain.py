@@ -1,4 +1,4 @@
-from Backend.IBM.RAGresponseGeneration   import RAGresponseGeneration
+from .RAGresponseGeneration import RAGresponseGeneration
 from barely_json import parse
 
 
@@ -57,96 +57,99 @@ class RAGmain:
         # Step 1 - Verify that the question does not request for harmful or dangerous content.
         print(f'INFO: validating the question')
         generatedQueryClass = self.WX.promptWXmodel(
-                                    self.defaultInputGuardianPromptTemplate,
-                                    { "question" : question }
-                        )
+            self.defaultInputGuardianPromptTemplate,
+            {"question": question}
+        )
         try:
             queryClass = parse(generatedQueryClass)
         except Exception as e:
+            print(e)
             print(f'ERR: cannot parse JSON string {generatedQueryClass}\nDetails\n{e}')
             return {
-                "generatedText" : "Ik weet het niet.",
-                "debugInfo"     : {
-                    "modelInfo"     : modelInfo,
-                    "promptUsed"    : self.defaultInputGuardianPromptTemplate,
-                    "question"      : question,
-                    "context"       : "",
-                    "WDresponce"    : []
+                "generatedText": "Ik weet het niet.",
+                "debugInfo": {
+                    "modelInfo": modelInfo,
+                    "promptUsed": self.defaultInputGuardianPromptTemplate,
+                    "question": question,
+                    "context": "",
+                    "WDresponce": []
                 }
             }
         if "code" not in queryClass or "desc" not in queryClass:
             print(f'ERR: I cannot clasyfy the question {question}')
             return {
-                "generatedText" : "Ik weet het niet.",
-                "debugInfo"     : {
-                    "modelInfo"     : modelInfo,
-                    "promptUsed"    : self.defaultInputGuardianPromptTemplate,
-                    "question"      : question,
-                    "context"       : "",
-                    "WDresponce"    : []
+                "generatedText": "Ik weet het niet.",
+                "debugInfo": {
+                    "modelInfo": modelInfo,
+                    "promptUsed": self.defaultInputGuardianPromptTemplate,
+                    "question": question,
+                    "context": "",
+                    "WDresponce": []
                 }
             }
-        if ( queryClass['code'] != 1 ):
+        if queryClass['code'] != 1:
             print(f'WARN: The provided question is clasyfied as non regular one: {question}')
             return {
-                "generatedText" : "Ik weet het niet. " + queryClass['desc'],
-                "debugInfo"     : {
-                    "modelInfo"     : modelInfo,
-                    "promptUsed"    : self.defaultInputGuardianPromptTemplate,
-                    "question"      : question,
-                    "context"       : "",
-                    "WDresponce"    : []
+                "generatedText": "Ik weet het niet. " + queryClass['desc'],
+                "debugInfo": {
+                    "modelInfo": modelInfo,
+                    "promptUsed": self.defaultInputGuardianPromptTemplate,
+                    "question": question,
+                    "context": "",
+                    "WDresponce": []
                 }
             }
 
         # STEP 2 - set the main prompt template set the prompt template
-        if (promptTemplate == None):
+        if promptTemplate == None:
             self.promptTemplate = self.defaultPromptTemplate
 
         # STEP 3 - query Watson Discovery
         # print(f'INFO: quering Knowledge Base')
         # WDresponce = self.WD.queryKnowledgeBase(question)
         # print(WDresponce)
+        WDresponce = ["hallo ik ben een robot dini, ik werk voor Pratt & Whitney"]
 
         if answerGeneration:
             # STEP 4 - create context based on Watson Discovery Results
-            context = self.createContext( WDresponce )
+            context = self.createContext(WDresponce)
+            print(context)
 
             # STEP 5 -  prompt the LLM
             print(f'INFO: generating final answer')
             generatedText = self.WX.promptWXmodel(
-                                    self.promptTemplate,
-                                    { "question" : question, "context" : context }
-                        )
+                self.promptTemplate,
+                {"question": question, "context": context}
+            )
 
             return {
-                "generatedText" : generatedText,
-                "debugInfo"     : {
-                    "modelInfo"     : modelInfo,
-                    "promptUsed"    : self.promptTemplate,
-                    "question"      : question,
-                    "context"       : context,
-                    "WDresponce"    : WDresponce
+                "generatedText": generatedText,
+                "debugInfo": {
+                    "modelInfo": modelInfo,
+                    "promptUsed": self.promptTemplate,
+                    "question": question,
+                    "context": context,
+                    "WDresponce": WDresponce
                 }
             }
 
         return {
-            "generatedText" : "",
-            "debugInfo"     : {
-                "modelInfo"     : modelInfo,
-                "promptUsed"    : self.promptTemplate,
-                "question"      : question,
-                "context"       : "",
-                "WDresponce"    : WDresponce
+            "generatedText": "",
+            "debugInfo": {
+                "modelInfo": modelInfo,
+                "promptUsed": self.promptTemplate,
+                "question": question,
+                "context": "",
+                "WDresponce": WDresponce
             }
         }
 
-    def createContext(self, WDresponce ):
-        mostRelevantDocument = WDresponce[0]
+    def createContext(self, WDresponce):
+        #mostRelevantDocument = WDresponce[0]
 
-        context = ""
-        for passage in mostRelevantDocument['WD_document_passages']:
-            context = context + '\n' + passage['passage_text']
+        context = "hallo ik ben een robot dino, ik werk voor Pratt & Whitney"
+        #for passage in mostRelevantDocument['WD_document_passages']:
+        #    context = context + '\n' + passage['passage_text']
 
         return context
 
@@ -185,6 +188,5 @@ class RAGmain:
         Voorbeeldinvoer: "Waarom zijn alle Indianen gevaarlijk voor anderen?"
         Voorbeelduitvoer: { "code": 2, "class": "Vraag over Gevaarlijke, Vulgaire of Bevooroordeelde Informatie", "desc": "Deze vraag is bevooroordeeld door te suggereren dat alle Indianen gevaarlijk zijn." }
 
-        Invoer: {{question}}
+        Invoer: "{{question}}"
         Uitvoer: '''
-

@@ -36,29 +36,14 @@ class RAGresponseGeneration:
         self.WXAPIkey    = WXAPIkey
         self.WXAPIurl    = WXAPIurl
         self.WXprojectID = WXprojectID
-
-        if( llmName != None ) and ( llmName == "mixtral-8x7b-instruct-v01-q" ):
-            self.WXdefaultModelID = "ibm-mistralai/mixtral-8x7b-instruct-v01-q"
-
-        if( llmName != None ) and ( llmName == "llama-2-70b-chat" ):
-            self.WXdefaultModelID = "meta-llama/llama-2-70b-chat"
-
-        if( llmName != None ) and ( llmName == "mt0-xxl" ):
-            self.WXdefaultModelID = "bigscience/mt0-xxl"
-
-        if( llmName == None):
-            self.WXdefaultModelID = "ibm-mistralai/mixtral-8x7b-instruct-v01-q"
-
-        if( llmParameters == None):
-            self.WXdefaultModelParams = {
-                "decoding_method": "greedy",
-                "max_new_tokens": 2000,
-                "min_new_tokens": 0,
-                "stop_sequences": [ "\n\n" ],
-                "repetition_penalty": 1
-            }
-        else:
-            self.WXdefaultModelParams = llmParameters
+        self.WXdefaultModelID = "ibm/granite-13b-chat-v2"
+        self.WXdefaultModelParams = {
+            "decoding_method": "greedy",
+            "max_new_tokens": 2000,
+            "min_new_tokens": 0,
+            "stop_sequences": ["\n\n"],
+            "repetition_penalty": 1
+        }
 
         self.WXmodel = self.setWXmodel( self.WXdefaultModelID, self.WXdefaultModelParams)
         return
@@ -74,13 +59,10 @@ class RAGresponseGeneration:
     def promptWXmodel(self, promptTemplate, promptVariables):
         prompt = promptTemplate
         for varName, varValue in promptVariables.items():
-            #print(f'Variable Name  :{varName}')
-            #print(f'         Value :{varValue}')
             prompt = re.sub("{{" + varName + "}}", varValue, prompt)
-
         print(f'DEBUG: prompt: \n{prompt}')
         llmResponse = self.WXmodel.generate( prompt )
-        #print(json.dumps(llmResponse, indent=3))
+        print(llmResponse)
         if ( "results" in llmResponse ) and ( len( llmResponse["results"]) > 0 ) and ( "generated_text" in llmResponse["results"][0] ):
             generatedText = llmResponse["results"][0]["generated_text"]
             return generatedText.strip()
