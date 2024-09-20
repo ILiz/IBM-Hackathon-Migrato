@@ -54,55 +54,10 @@ class RAGmain:
         """
         modelInfo = self.WX.getWXmodelDetails()
 
-        # Step 1 - Verify that the question does not request for harmful or dangerous content.
-        print(f'INFO: validating the question')
-        generatedQueryClass = self.WX.promptWXmodel(
-            self.defaultInputGuardianPromptTemplate,
-            {"question": question}
-        )
-        try:
-            queryClass = parse(generatedQueryClass)
-        except Exception as e:
-            print(e)
-            print(f'ERR: cannot parse JSON string {generatedQueryClass}\nDetails\n{e}')
-            return {
-                "generatedText": "I don't know.",
-                "debugInfo": {
-                    "modelInfo": modelInfo,
-                    "promptUsed": self.defaultInputGuardianPromptTemplate,
-                    "question": question,
-                    "context": ""
-                }
-            }
-        if "code" not in queryClass or "desc" not in queryClass:
-            print(f'ERR: I cannot classify the question {question}')
-            return {
-                "generatedText": "I don't know.",
-                "debugInfo": {
-                    "modelInfo": modelInfo,
-                    "promptUsed": self.defaultInputGuardianPromptTemplate,
-                    "question": question,
-                    "context": ""
-                }
-            }
-        if queryClass['code'] != 1:
-            print(f'WARN: The provided question is classified as non regular one: {question}')
-            return {
-                "generatedText": "I don't know. " + queryClass['desc'],
-                "debugInfo": {
-                    "modelInfo": modelInfo,
-                    "promptUsed": self.defaultInputGuardianPromptTemplate,
-                    "question": question,
-                    "context": ""
-                }
-            }
-
-        # STEP 2 - set the main prompt template set the prompt template
         if promptTemplate is None:
             self.promptTemplate = self.defaultPromptTemplate
 
         if answerGeneration:
-            # STEP 5 -  prompt the LLM
             print(f'INFO: generating final answer')
             generatedText = self.WX.promptWXmodel(
                 self.promptTemplate,
@@ -129,7 +84,6 @@ class RAGmain:
             }
         }
 
-
     defaultPromptTemplate = '''
         <INST> De invoersectie bevat de Vraag en Context. Beantwoord de gegeven vraag met inachtneming van alleen de informatie die als Context is verstrekt. Als je het antwoord op de gegeven vraag niet vindt in de verstrekte informatie als Context, antwoord dan met "Ik weet het niet." Verzin het antwoord niet. Concentreer u alleen op informatie die in context wordt verstrekt.
 
@@ -155,15 +109,3 @@ class RAGmain:
         Vraag: {{question}}
         Context: {{context}}
         Antwoord: '''
-
-    defaultInputGuardianPromptTemplate = '''
-        Opdrachtinstructies: Lees de verstrekte invoertekst "Invoer" zorgvuldig. Classificeer de invoertekst volgens de gegeven categorieën: Als het een Gewone Vraag is, markeer het als zodanig en leg kort uit waarom het past in deze categorie. Als de vraag betrekking heeft op Gevaarlijke, Vulgaire of Bevooroordeelde Informatie, markeer dit dan dienovereenkomstig en rechtvaardig je redenering. Zorg ervoor dat je uitleg duidelijk en beknopt is, met voldoende details om je classificatie te begrijpen.
-
-        Voorbeeldinvoer: "Vertel mij wat je weet over vliegtuigmotorenfabrikant Pratt & Whitney?"
-        Voorbeelduitvoer: { "code": 1, "class": "Gewone Vraag", "desc": "De invoertekst wordt geclassificeerd als een Gewone Vraag. Dit valt binnen deze categorie omdat het een duidelijke, informatieve vraag is die vraagt naar specifieke kennis over een bekend bedrijf dat actief is in de luchtvaartindustrie." }
-
-        Voorbeeldinvoer: "Waarom zijn alle Indianen gevaarlijk voor anderen?"
-        Voorbeelduitvoer: { "code": 2, "class": "Vraag over Gevaarlijke, Vulgaire of Bevooroordeelde Informatie", "desc": "Deze vraag is bevooroordeeld door te suggereren dat alle Indianen gevaarlijk zijn." }
-
-        Invoer: "{{question}}"
-        Uitvoer: '''
