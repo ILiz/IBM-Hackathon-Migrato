@@ -85,27 +85,23 @@ class RAGmain:
         }
 
     defaultPromptTemplate = '''
-        <INST> De invoersectie bevat de Vraag en Context. Beantwoord de gegeven vraag met inachtneming van alleen de informatie die als Context is verstrekt. Als je het antwoord op de gegeven vraag niet vindt in de verstrekte informatie als Context, antwoord dan met "Ik weet het niet." Verzin het antwoord niet. Concentreer u alleen op informatie die in context wordt verstrekt.
+        <INST> The input contains Question and Context. Answer the given Question using only knowledge from the given Context. If the answer is not in the given Context, the Answer is "I cannot help you with that, reformulate your question." Do not create your answer. Only focus on the given Context.
 
         <EXAMPLE>
-        Vraag: Wat is de gemiddelde levensduur van dolfijnen?
-        Context: De gemiddelde levensduur van dolfijnen kan variëren afhankelijk van de soort, leefomstandigheden (of ze in het wild leven of in gevangenschap) en andere milieugerelateerde en genetische factoren. Voor veel soorten dolfijnen die in het wild leven, varieert de gemiddelde levensduur van 20 tot 30 jaar. Sommige soorten, zoals de tuimelaar (Tursiops truncatus), kunnen zelfs 50 jaar of langer leven onder ideale omstandigheden. Aan de andere kant kunnen kleinere dolfijnsoorten een iets kortere gemiddelde levensduur hebben. Het is echter belangrijk om te onthouden dat deze gegevens generalisaties zijn en kunnen variëren afhankelijk van de specifieke soort en leefomstandigheden.
-        Antwoord: Van 20 tot 30 jaar.
+        Question: When did World War I start?
+        Context: World War I or the First World War (28 July 1914 – 11 November 1918), also known as the Great War, was a global conflict between two coalitions: the Allies (or Entente) and the Central Powers. Fighting took place mainly in Europe and the Middle East, as well as in parts of Africa and the Asia-Pacific, and in Europe was characterised by trench warfare and the use of artillery, machine guns, and chemical weapons (gas). World War I was one of the deadliest conflicts in history, resulting in an estimated 9 million military dead and 23 million wounded, plus up to 8 million civilian deaths from causes including genocide (including the Armenian genocide). The movement of large numbers of people was a major factor in the Spanish flu pandemic, which killed millions.
+        Answer: World War I start on 28 July 1914.
 
-        Vraag: Wie is momenteel het staatshoofd in Nederland?
-        Context: Momenteel is het staatshoofd in Nederland een constitutionele monarch. De constitutionele monarch van Nederland is Koning Willem-Alexander, die op 30 april 2013 de troon besteeg na de abdicatie van zijn moeder, Koningin Beatrix.
-        Antwoord: Koning Willem-Alexander
+        Question: Explain cognitive dissonance.
+        Context: In the field of psychology, cognitive dissonance is described as the mental disturbance people feel when they realize their cognitions and actions are inconsistent or contradictory. This may ultimately result in some change in their cognitions or actions to cause greater alignment between them so as to reduce this dissonance. Relevant items of information include peoples' actions, feelings, ideas, beliefs, values, and things in the environment. Cognitive dissonance is typically experienced as psychological stress when persons participate in an action that goes against one or more of those things. According to this theory, when an action or idea is psychologically inconsistent with the other, people do all in their power to change either so that they become consistent. The discomfort is triggered by the person's belief clashing with new information perceived, wherein the individual tries to find a way to resolve the contradiction to reduce their discomfort.
+        Answer: Cognitive dissonane is descrives as the mental disturbance people feel when they realice their cognitions and actions are inconsistent or contradictory.
 
-        Vraag: Wat is de naam van de stad in het noorden van Nederland die beroemd is om zijn kaasproductie?
-        Context: Nederland produceert veel soorten kazen die wereldwijd bekend en gewaardeerd zijn. Hier zijn enkele voorbeelden van populaire Nederlandse kazen, bijvoorbeeld, Gouda Dit is een van de beroemdste Nederlandse kazen, gemaakt van koemelk. Het heeft een delicate, romige smaak die intenser wordt naarmate het rijpt. Edam Een andere populaire kaas, ook gemaakt van koemelk. Het wordt gekenmerkt door een milde smaak en halfharde consistentie. Vaak verkocht in de vorm van kleine, ronde koppen bedekt met rode of gele was. Leerdammer Een Emmentaler-type kaas, bekend om zijn grote gaten en zoetige, enigszins nootachtige smaak. Maasdam Vergelijkbaar met Leerdammer, met grote gaten en een karakteristieke zoete smaak. Dit is het antwoord van Nederland op Zwitserse kazen. Boerenkaas Betekent "boerenkaas" en is een traditionele Nederlandse kaas gemaakt van rauwe koemelk, wat het een rijkere smaak en textuur geeft. Limburger Een kaas met een sterke geur en smaak, oorspronkelijk geproduceerd in de regio Limburg. Het heeft een zachte consistentie en sterke geur. Oude Kaas Betekent "oude kaas" en verwijst naar kazen die 1 tot 3 jaar zijn gerijpt, waardoor ze een intense, scherpe smaak en harde consistentie krijgen. Deze kazen kunnen op zichzelf worden gegeten, gebruikt als ingrediënten in gerechten, of geserveerd met wijn en brood als onderdeel van een traditionele Nederlandse maaltijd of snack. Nederland staat bekend om zijn kaasmaaktraditie, en zijn kazen worden geëxporteerd en gewaardeerd over de hele wereld.
-        Antwoord: Ik weet het niet.
-
-        Vraag: Wie is de beroemdste speler in de geschiedenis van AZ Alkmaar?
-        Context: De beroemdste voetballer in de geschiedenis van het AZ Alkmaar team is Kees Kist. Kist was een uitmuntende spits die voor AZ speelde in de jaren 70 en begin jaren 80. Hij scoorde een aanzienlijk aantal doelpunten voor de club en was een sleutelfiguur in de meest succesvolle jaren in de geschiedenis van de club, inclusief het seizoen 1977-1978 toen AZ de finale van de UEFA Cup bereikte. Kist werd ook topscorer in de Eredivisie, wat bijdroeg aan zijn reputatie als een van de meest significante spelers in de geschiedenis van de club. Zijn bijdrage aan de successen van AZ Alkmaar wordt tot op de dag van vandaag herinnerd en gewaardeerd door fans.
-        Antwoord: Kees Kist
+        Question: Give me a question about the Mona Lisa.
+        Context: The Mona Lisa painting is one of the most emblematic portraits in the history of art, where is located at the Louvre. Painted by Leonardo da Vinci in the 16th century, it joined the collections of the court of France before being added to the works on display at the Louvre Museum
+        Answer: Who painted the Mona Lisa? (Leonardo da Vinci)
         </EXAMPLE>
         </INST>
 
-        Vraag: {{question}}
+        Question: {{question}}
         Context: {{context}}
-        Antwoord: '''
+        Answer: '''
