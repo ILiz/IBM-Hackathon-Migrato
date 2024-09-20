@@ -1,17 +1,6 @@
 import requests
 
-import Backend.libs.Credentials
-
-
-def send_data(ind, text, dense_vector, sparse_vector, title, uri_source):
-    requests.post(url=Credentials.url + Credentials.index + Credentials.add_document + str(ind), json={
-        "my_vector": dense_vector.tolist(),
-        "my_sparse_vector": sparse_vector.toarray().tolist()[0],
-        "my_text": text,
-        "my_title": title,
-        "my_uri_source": uri_source
-    },
-                  auth=(Credentials.authentication_username, Credentials.authentication_password))
+from Backend.libs import Credentials
 
 
 def send_data_bulk(bulk_data):
@@ -24,46 +13,3 @@ def send_data_bulk(bulk_data):
     if r.json()['errors']:
         print(r.content)
 
-
-def create_index():
-    print(Credentials.url + Credentials.index)
-    r = requests.put(url=Credentials.url + Credentials.index, json={
-        "mappings": {
-            "properties": {
-                "my_vector": {
-                    "type": "dense_vector",
-                    "dims": 1024,
-                    "index": "true",
-                    "similarity": "cosine"
-                },
-                "my_sparse_vector": {
-                    "type": "dense_vector"
-                },
-                "Text": {
-                    "type": "text"
-                },
-                "Title": {
-                    "type": "text"
-                },
-                "Course": {
-                    "type": "text"
-                }
-            }
-        }
-    }, auth=(Credentials.authentication_username, Credentials.authentication_password), verify=False)
-    try:
-        if r.json()['error']:
-            if r.json()['error']['root_cause'][0]['type'] == "resource_already_exists_exception":
-                print("index exists")
-                return False
-            print(r.content)
-            return False
-    except KeyError:
-        print("")
-    print("index created")
-    return True
-
-
-def delete_index():
-    requests.delete(url=Credentials.url + Credentials.index,
-                    auth=(Credentials.authentication_username, Credentials.authentication_password))

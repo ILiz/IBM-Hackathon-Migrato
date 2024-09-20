@@ -8,6 +8,8 @@ from fastapi import FastAPI, Form, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
 from Backend.IbmConnections import seek_answer_IBM
+from Backend.libs.utils import upload_to_index
+
 # from Backend.libs.utils import upload_to_index
 
 API_VERSION = "1.0.0"
@@ -50,7 +52,7 @@ def submit_document_for_indexing(
     print(extracted_text, flush=True)
     Path(file_upload.filename).unlink(missing_ok=True)
 
-    # upload_to_index(file_upload.filename, file_upload.filename.split(".")[0], extracted_text)
+    upload_to_index(file_upload.filename, file_upload.filename.split(".")[0], extracted_text)
 
     return "File uploaded and indexed"
 

@@ -36,9 +36,6 @@ def create_index():
                     "index": "true",
                     "similarity": "cosine"
                 },
-                "my_sparse_vector": {
-                    "type": "dense_vector"
-                },
                 "Text": {
                     "type": "text"
                 },

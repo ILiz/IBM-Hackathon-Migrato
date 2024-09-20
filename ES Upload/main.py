@@ -7,15 +7,10 @@ import traceback
 
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer
-from sklearn.feature_extraction.text import CountVectorizer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 import ElasticSearch
 import DatabaseConnection
-
-
-def get_sparse_vector(text_1):
-    return count_vectorizer.transform(text_1)
 
 
 def load_model(model_name):
@@ -84,8 +79,6 @@ if ElasticSearch.create_index():
 
     model = load_model('intfloat/multilingual-e5-large')
     tokenizer = AutoTokenizer.from_pretrained('intfloat/multilingual-e5-large')
-    count_vectorizer = CountVectorizer(max_features=4096).fit(all_texts)
-    pickle.dump(count_vectorizer, open("sparse_vector_2500_token_chunks.pickel", "wb"))
 
     textSplitter = RecursiveCharacterTextSplitter(
         chunk_size=512,
@@ -108,12 +101,11 @@ if ElasticSearch.create_index():
             for chunk in chunks:
                 try:
                     chunk_text = chunk
-                    sparse_vector = get_sparse_vector([chunk_text])
                     dense_vector = model_encoding(chunk_text, model)
 
                     json_data.append(f'{{\"index\": {{\"_id\": \"{str(asset_id) + "_" + str(chunkNumber)}\"}}}}')
                     json_data.append(
-                        f'{{\"my_vector\": {dense_vector.tolist()}, \"my_sparse_vector\": {sparse_vector.toarray().tolist()[0]}, \"Text\": \"{str(chunk_text)}\", \"Title\": \"{str(title)}\", \"Course\": \"{str(uri_source)}\"}}')
+                        f'{{\"my_vector\": {dense_vector.tolist()}, \"Text\": \"{str(chunk_text)}\", \"Title\": \"{str(title)}\", \"Course\": \"{str(uri_source)}\"}}')
                     chunkNumber += 1
                 except Exception as e:
                     print(e)
