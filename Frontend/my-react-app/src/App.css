@@ -1,59 +1,167 @@
+html {
+  --top-bar-height: 60px;
+  --left-side-bar-width: 250px;
+  --upload-button-box-height: 60px;
+  --document-header-box-height: 40px;
+}
+
 .App {
-  text-align: center;
+  background-color: #E3E7F4;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 20vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.bodyChat {
-  align-self: flex-end;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: top;
-  min-height: 85vh;
-  max-height: 85vh;
-}
-
-.inputField {
-  min-height: 10vh;
-  max-height: 10vh;
-  min-width: 28vw;
-  max-width: 28vw;
+.Top-bar {
+  height: var(--top-bar-height);
+  background-color: #FFFFFF;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.Top-bar-left {
+  height: var(--top-bar-height);
+  width: 25%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: left;
+}
+
+.Top-bar-center {
+  height: var(--top-bar-height);
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.Top-bar-right {
+  height: var(--top-bar-height);
+  width: 25%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: right;
+}
+
+.Image-logo {
+  height: 80%;
+}
+
+.Image-user {
+  height: 70%;
+  margin-right: 1vw;
+}
+
+.Left-sidebar {
+  width: var(--left-side-bar-width);
+  height: 100%;
+  position: fixed;
+  background-color: #FFFFFF;
+}
+
+.Document-header {
+  height: var(--document-header-box-height);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  /*box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  border-top: 2px solid #F0F0FF;*/
+}
+
+.Document-header #documentHeader {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.Document-list {
+  height: calc(100vh - var(--top-bar-height) - var(--upload-button-box-height) - var(--document-header-box-height));
+}
+
+.Document-list #documentList {
+  max-height: calc(100vh - var(--top-bar-height) - var(--upload-button-box-height) - var(--document-header-box-height) - 17px);
+  overflow: auto;
+}
+
+.Document-list ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.Document-list ::-webkit-scrollbar-track {
+  background: #F0F0FF;
+}
+
+.Document-list ::-webkit-scrollbar-thumb {
+  background: #1976D2;
+  /*background: #A56CC1;*/
+}
+
+.Document-list ::-webkit-scrollbar-thumb:hover {
+  background: #1565C0;
+  /*background: #9461ad;*/
+}
+
+.Document-buttons {
+  height: var(--upload-button-box-height);
+  /*border-top: 2px solid #F0F0FF;*/
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Document-buttons #uploadButton {
+   height: 35px;
+}
+
+.App-center {
+  width: calc(100vw - var(--left-side-bar-width));
+  height: calc(100vh - var(--top-bar-height));
+  margin-left: var(--left-side-bar-width);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.Chatbox {
+  width: calc(90vw - var(--left-side-bar-width));
+  height: calc(90vh - var(--top-bar-height));
+  border-radius: 25px;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+
+.Feedback-box {
+  width: auto;
+  height: 100vh;
+}
+
+.Input-box {
+  width: auto;
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  border-top: 2px solid #F0F0FF;
+}
+
+.Input-box #userInput {
+  width: 100vw;
+  margin-left: 1vw;
+}
+
+.Input-buttons {
+  margin-left: 1vw;
+  margin-right: 1vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
