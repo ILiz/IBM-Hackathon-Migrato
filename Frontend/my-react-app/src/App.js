@@ -1,4 +1,5 @@
 import './App.css';
+import {v4 as uuidv4} from 'uuid';
 import { useRef } from 'react';
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
@@ -18,6 +19,7 @@ function App() {
   const hiddenFileInput = useRef(null);
   const [askDisabled, setAskDisabled] = useState(true);
   const [files, setFiles] = useState([]);
+  const [messages, setMessages] = useState([]);
   
   //Called when a selected file is uploaded.
   const handleUploadFile = event => {
@@ -55,7 +57,7 @@ function App() {
 	setFiles(
 	  [
 		...files,
-		{ uuid: filename, name:filename, url:"?" }//TODO: Create object from response with delete link etc.
+		{ uuid:uuidv4(), name:filename, url:"?" }//TODO: Create object from response with delete link etc.
 	  ]
 	);
   };
@@ -72,12 +74,23 @@ function App() {
   
   //Called when the user question is submitted.  
   const handleSubmitQuestion = textfield => {
-	const question = textfield.value; 
+	const question = textfield.value;
 	textfield.value = "";
 	setAskDisabled(true);
+	setMessages(
+	  [
+		...messages,
+		{ uuid:uuidv4(), value:question, owner:"me" }
+	  ]
+	);
+	
 	console.log("Sending question: " + question);
-	//const fetchData = async () => {
-	//const formData = new FormData();
+	awaitAnswer(question);
+  }
+  
+  //Await answer.
+  const awaitAnswer = async question => {
+    //const formData = new FormData();
     //    formData.append("question", "What are System 1 and System 2?");
     //    const response = await fetch('http://127.0.0.1:8000/api/v1/ragDocumentStreamIBM', {
     //        method: 'POST',
@@ -86,8 +99,19 @@ function App() {
     //    const data = await response.json();
     //    console.log(data); // Response from Backend is stored here
 	//};
-	//fetchData();
-  }
+	await new Promise(r => setTimeout(r, 2000));
+	onAnswerSuccess();
+  };
+  
+  //Called when a LLM response has been received successfully.
+  const onAnswerSuccess = () => {
+	setMessages(
+	  [
+		...messages,
+		{ uuid:uuidv4(), value:uuidv4(), owner:"LLM" }
+	  ]
+	);
+  };
 
   return (
 	<div className="App">
@@ -133,6 +157,11 @@ function App() {
 		<div className="App-center">
 			<div className="Chatbox">
 				<div className="Feedback-box">
+					<ul>
+					{messages.map((message) => (
+						<li key={message.uuid}>{message.value}</li>
+					))}
+					</ul>
 				</div>
 				<div className="Input-box" >
 					<TextField id="userInput" placeholder="Ask something..." variant="standard"
