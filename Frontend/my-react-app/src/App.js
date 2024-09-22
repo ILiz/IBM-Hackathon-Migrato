@@ -34,18 +34,18 @@ function App() {
   
   //Uploads a file.
   const uploadFile = async file => {
-    //const formdata = new FormData();
-    //formdata.append("file_upload", file);
+    const formdata = new FormData();
+    formdata.append("file_upload", file);
 
-    //fetch('http://127.0.0.1:8000/api/v1/documentSubmitIndexing', {
-    //  method: 'POST',
-    //  body: formdata // Here, stringContent or bufferContent would also work
-    //})
-    //.then(function(res) {
-    //  return res.json();
-    //}).then(function(json) {
-    //  console.log(json);
-    //});
+    fetch('http://127.0.0.1:8000/api/v1/documentSubmitIndexing', {
+      method: 'POST',
+      body: formdata // Here, stringContent or bufferContent would also work
+    })
+    .then(function(res) {
+      return res.json();
+    }).then(function(json) {
+      console.log(json);
+    });
 	
 	onFileUploadSuccess(file);
   };
@@ -90,25 +90,24 @@ function App() {
   
   //Await answer.
   const awaitAnswer = async question => {
-    //const formData = new FormData();
-    //    formData.append("question", "What are System 1 and System 2?");
-    //    const response = await fetch('http://127.0.0.1:8000/api/v1/ragDocumentStreamIBM', {
-    //        method: 'POST',
-    //        body: formData
-    //    });
-    //    const data = await response.json();
-    //    console.log(data); // Response from Backend is stored here
-	//};
-	await new Promise(r => setTimeout(r, 2000));
-	onAnswerSuccess();
-  };
+    const formData = new FormData();
+        formData.append("question", question);
+        const response = await fetch('http://127.0.0.1:8000/api/v1/ragDocumentStreamIBM', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        console.log(data); // Response from Backend is stored here
+        onAnswerSuccess(question, data["answer"]);
+	};
   
   //Called when a LLM response has been received successfully.
-  const onAnswerSuccess = () => {
+  const onAnswerSuccess = (question, answer) => {
 	setMessages(
 	  [
 		...messages,
-		{ uuid:uuidv4(), value:uuidv4(), owner:"LLM" }
+		{ uuid:uuidv4(), value:question, owner:"me" },
+		{ uuid:uuidv4(), value:answer, owner:"LLM" }
 	  ]
 	);
   };
