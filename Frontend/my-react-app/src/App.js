@@ -33,6 +33,18 @@ function App() {
   
   //Uploads a file.
   const uploadFile = async file => {
+    const formdata = new FormData();
+    formdata.append("file_upload", file);
+
+    fetch('http://127.0.0.1:8000/api/v1/documentSubmitIndexing', {
+      method: 'POST',
+      body: formdata // Here, stringContent or bufferContent would also work
+    })
+    .then(function(res) {
+      return res.json();
+    }).then(function(json) {
+      console.log(json);
+    });
 	//console.log(fileUploaded['name'])
 	//const formdata = new FormData();
 	//formdata.append("file_upload", fileUploaded);
@@ -43,7 +55,7 @@ function App() {
 	//const data = await response.json();
 	//if (data === "File uploaded and indexed") {
 	//	setFilename(fileUploaded['name'])
-	//}  
+    //}
 	
 	console.log(file);
 	
@@ -67,6 +79,18 @@ function App() {
 	console.log(event.target.value);
 	event.target.value = "";
 	setAskDisabled(true);
+	console.log("sending question") ;
+	const fetchData = async () => {
+	const formData = new FormData();
+        formData.append("question", "What are System 1 and System 2?");
+        const response = await fetch('http://127.0.0.1:8000/api/v1/ragDocumentStreamIBM', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        console.log(data); // Response from Backend is stored here
+	};
+	fetchData();
   }
 
   return (
