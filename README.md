@@ -44,3 +44,25 @@ fastapi dev main.py
 ## Licensing
 
 pypdf was picked due to its permissive BSD license and reasonable performance: https://pypi.org/project/pypdf/4.3.1/
+
+## Fixing certificates:
+
+cd /home/studentadmingpt/certs  
+sudo rm fullchain.pem  
+sudo rm privkey.pem
+
+sudo certbot certonly --standalone -d studentgpt.migrato.nl
+if asked:
+  oscar.dubbeldam@migrato.nl
+  y
+  n
+else (it asks only for renewal)
+  y
+
+sudo cp /etc/letsencrypt/live/studentgpt.migrato.nl-0001/fullchain.pem /home/studentadmingpt/certs/fullchain.pem  
+sudo cp /etc/letsencrypt/live/studentgpt.migrato.nl-0001/privkey.pem /home/studentadmingpt/certs/privkey.pem  
+
+sudo docker container stop <container_id>  
+sudo docker run -p 443:443 --restart=always --mount source=gptvol,target=/app/storage -v /home/studentadmingpt/certs:/var/certs student-gpt:prod 
+
+
